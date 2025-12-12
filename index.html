@@ -737,6 +737,7 @@
                 <option value="3">3</option>
                 <option value="2">2</option>
                 <option value="1">1</option>
+                <option value="0">0</option>
               </select>
             </div>
           </div>
@@ -1214,13 +1215,22 @@ document.getElementById('pokemonInput').value = 'Quagsire';
     hpElement.style.width = `${newHPWidth}px`;
     prevHpElement.style.width = `${newHPWidth + 1}px`;
     document.querySelector('.hptext').innerText = `${currentHPPercent}%`;
-    if (currentHPPercent <= 20) {
+    if (currentHPPercent <= 0) {
+      hpElement.style.display = 'none';
+      prevHpElement.style.display = 'none';
+    } else if (currentHPPercent <= 20) {
+      hpElement.style.display = 'block';
+      prevHpElement.style.display = 'block';
       hpElement.className = 'hp hp-red';
       prevHpElement.className = 'prevhp prevhp-red';
     } else if (currentHPPercent <= 50) {
+      hpElement.style.display = 'block';
+      prevHpElement.style.display = 'block';
       hpElement.className = 'hp hp-yellow';
       prevHpElement.className = 'prevhp prevhp-yellow';
     } else {
+      hpElement.style.display = 'block';
+      prevHpElement.style.display = 'block';
       hpElement.className = 'hp';
       prevHpElement.className = 'prevhp';
     }
