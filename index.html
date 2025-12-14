@@ -449,6 +449,7 @@
 
 </style>
 <script src="fullDex.js"></script>
+<script src="fullDex2.js"></script>
 </head>
 <body>
 <div class="innerbattle">
@@ -1345,16 +1346,19 @@ document.getElementById('pokemonInput').value = 'Quagsire';
       '5': '3.5x',
       '6': '4x'
     };
-    stat = stat == 'Eva' ? 'Evasion' : stat == 'Acc' ? 'Accuracy' : stat;
+    const label =
+      stat === 'Eva' ? 'Evasion' :
+        stat === 'Acc' ? 'Accuracy' :
+          stat;
+
     statElement.style.display = 'block';
-    statElement.innerText = `${modifiers[value]} ${stat}`;
+    statElement.innerText = `${modifiers[value]} ${label}`;
     statElement.className = numValue > 0 ? 'good' : 'bad';
+
     statElement.onclick = function () {
-      //  this.style.display = 'none';
-      updateStatMod(stat, '0');
-      //  console.log("clicked",stat);
+      updateStatMod(stat, '0');                 // <-- use key
       document.getElementById('select' + stat).value = '0';
-    }
+    };
   }
 
   function updateMonScale(value) {
@@ -1388,9 +1392,12 @@ document.getElementById('pokemonInput').value = 'Quagsire';
       const nicknameInput = document.getElementById('nicknameInput');
 
       // Find first matching pokemon name
-      const match = Object.keys(dex).find(name =>
+      let match = Object.keys(dex).find(name =>
+        name.toLowerCase().startsWith(input)
+      ) || Object.keys(megaDex).find(name =>
         name.toLowerCase().startsWith(input)
       );
+
 
       // console.log(match);
 
@@ -1585,6 +1592,9 @@ const updateSprite = (customURL) => {
   if (customURL) {
     console.log("updating sprite with custom URL", customURL);
     img.src = customURL;
+  } else if (megaDex[pokemon]) {
+    console.log("updating sprite with mega URL", megaDex[pokemon]);
+    img.src =isShiny ? megaDex[pokemon][1] : megaDex[pokemon][0];
   } else {
     console.log("updating sprite with noncustom url and pokemon", pokemon);
     let pokemonParts = pokemon.toLowerCase();
