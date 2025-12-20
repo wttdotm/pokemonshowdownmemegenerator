@@ -1366,19 +1366,30 @@ document.getElementById('pokemonInput').value = 'Quagsire';
     };
   }
 
-  function updateMonScale(value, invert = false) {
-    const sprite = document.getElementById('pokemonSprite');
-    if (value) monScale = value;
-    if (isCustomSprite) {
-      sprite.style.transform = `scaleX(-${monScale}) scaleY(${monScale})`;
-    } else {
-      sprite.style.transform = `scaleX(${monScale}) scaleY(${monScale})`;
+  // function updateMonScale(value, invert = false) {
+  //   const sprite = document.getElementById('pokemonSprite');
+  //   if (value) monScale = value;
+  //   if (isCustomSprite) {
+  //     sprite.style.transform = `scaleX(-${monScale}) scaleY(${monScale})`;
+  //   } else {
+  //     sprite.style.transform = `scaleX(${monScale}) scaleY(${monScale})`;
+  //   }
+  // }
+
+  function updateMonScale(value) {
+      const sprite = document.getElementById('pokemonSprite');
+      if (value) monScale = value;
+
+      // Only flip when viewing from back AND using custom sprite or mega
+      const needsFlip = isBack && (isCustomSprite || megaDex[pokemon]);
+      const xScale = needsFlip ? -monScale : monScale;
+      sprite.style.transform = `scaleX(${xScale}) scaleY(${monScale})`;
     }
-  }
 
   function updateSide(value) {
     isBack = value === 'back';
     updatePokemon();
+    updateMonScale(monScale);
   }
 
   function updateGender(value) {
@@ -1589,7 +1600,7 @@ const updateGenderIcon = () => {
 }
 
 const updateDisplayName = (displayNameInput) => {
-  document.getElementById('pokemonName').textContent = displayNameInput ? displayNameInput : nickname || firstMon;
+  document.getElementById('pokemonName').textContent = nickname || displayNameInput || firstMon;
 }
 
 
@@ -1646,18 +1657,19 @@ const updateSprite = (customURL) => {
     // Width is now controlled by CSS max-height on sprite and flexbox centering
   };
 
-  if (isBack && customURL || isBack && megaDex[pokemon]) {
-    spriteImage.style.transform = 'scaleX(-1)';
-  } else {
-    spriteImage.style.transform = 'scaleX(1)';
-  }
+  // if (isBack && customURL || isBack && megaDex[pokemon]) {
+  //   spriteImage.style.transform = 'scaleX(-1)';
+  // } else {
+  //   spriteImage.style.transform = 'scaleX(1)';
+  // }
 }
 
 const updateInputText = (inputText) => {
   document.getElementById('pokemonInput').value = inputText;
 }
 
-function updatePokemon() {
+function updatePokemon(newMon = null) {
+
   console.log("updating pokemon", pokemon);
   
   // update hazards
