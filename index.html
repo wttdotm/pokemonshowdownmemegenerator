@@ -1060,7 +1060,7 @@
               </ul>
           <p class="howToTitle" ><b>FAQ:</b></p>
           <p><i>"How do I add other forms?"</i>: Same syntax as showdown: <code>Pokemon-Form</code> (eg. <code>Charizard-Mega-X</code> or <code>Oricorio-Pom-Pom</code>)
-          <p><i>"Can you add ____?"</i>: Screens are coming soon, but you can make it yourself and submit a PR <a href="https://github.com/wttdotm/strugglemon">here</a>
+          <p><i>"Can you add ____?"</i>: Screens are coming soon, but you can make it yourself and submit a PR <a href="https://github.com/wttdotm/pokemonshowdownmemegenerator">here</a>
         </div>
     
       <div class="showLeftSide">
@@ -1082,6 +1082,7 @@
   let firstMon = "Quagsire"
   let nickname = "";
   let nicknamePlaceholder = "Nickname";
+  let monScale = 1
 
   let fullHPWidth = 150;
   let currentHPPercent = 100;
@@ -1361,10 +1362,15 @@ document.getElementById('pokemonInput').value = 'Quagsire';
     };
   }
 
-  function updateMonScale(value) {
-      const sprite = document.getElementById('pokemonSprite');
-      sprite.style.transform = `scale(${value})`;
+  function updateMonScale(value, invert = false) {
+    const sprite = document.getElementById('pokemonSprite');
+    if (value) monScale = value;
+    if (isCustomSprite) {
+      sprite.style.transform = `scaleX(-${monScale}) scaleY(${monScale})`;
+    } else {
+      sprite.style.transform = `scaleX(${monScale}) scaleY(${monScale})`;
     }
+  }
 
   function updateSide(value) {
     isBack = value === 'back';
@@ -1592,15 +1598,26 @@ const updateSprite = (customURL) => {
   if (customURL) {
     console.log("updating sprite with custom URL", customURL);
     img.src = customURL;
+    img.style.transform = 'scaleX(1)';
   } else if (megaDex[pokemon]) {
     console.log("updating sprite with mega URL", megaDex[pokemon]);
-    img.src =isShiny ? megaDex[pokemon][1] : megaDex[pokemon][0];
+    img.src = isShiny ? megaDex[pokemon][1] : megaDex[pokemon][0];
+    if (isBack) {
+      console.log("back");
+      img.style.transform = 'scaleX(-1)';
+    } else {
+      img.style.transform = 'scaleX(1)';
+    }
   } else {
     console.log("updating sprite with noncustom url and pokemon", pokemon);
     let pokemonParts = pokemon.toLowerCase();
     if (pokemon.includes('-')) {
       let parts = pokemonParts.split('-');
       pokemonParts = parts[0] + "-" + parts.slice(1).join('');
+    }
+
+    if (pokemon.includes(' ')) {
+      pokemonParts = pokemonParts.replace(' ', '');
     }
     console.log("pokemon after hyphen check", pokemon);
 
@@ -1625,7 +1642,7 @@ const updateSprite = (customURL) => {
     // Width is now controlled by CSS max-height on sprite and flexbox centering
   };
 
-  if (isBack && customURL) {
+  if (isBack && customURL || isBack && megaDex[pokemon]) {
     spriteImage.style.transform = 'scaleX(-1)';
   } else {
     spriteImage.style.transform = 'scaleX(1)';
